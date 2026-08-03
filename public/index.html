@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat_Proxy | Support</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f4f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #chat-container { width: 400px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
+        #chat-history { flex: 1; height: 400px; padding: 20px; overflow-y: auto; border-bottom: 1px solid #e4e4e7; display: flex; flex-direction: column; gap: 10px; }
+        .message { padding: 10px 14px; border-radius: 18px; max-width: 80%; font-size: 14px; line-height: 1.4; }
+        .user-msg { background: #007aff; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .bot-msg { background: #f4f4f5; color: #18181b; align-self: flex-start; border-bottom-left-radius: 4px; }
+        #input-area { display: flex; padding: 14px; background: #fff; }
+        #user-input { flex: 1; padding: 10px; border: 1px solid #d4d4d8; border-radius: 8px; outline: none; }
+        #send-btn { margin-left: 10px; padding: 0 16px; background: #18181b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        #send-btn:hover { background: #27272a; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-history">
+            <div class="message bot-msg">Hi! I'm the Chat_Proxy assistant. How can I help you today?</div>
+        </div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Ask about our products..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const history = document.getElementById('chat-history');
+            const message = input.value.trim();
+            if (!message) return;
+
+            history.innerHTML += `<div class="message user-msg">${message}</div>`;
+            input.value = '';
+            history.scrollTop = history.scrollHeight;
+
+            try {
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await res.json();
+                history.innerHTML += `<div class="message bot-msg">${data.response}</div>`;
+            } catch (err) {
+                history.innerHTML += `<div class="message bot-msg" style="color:red;">Error connecting to server.</div>`;
+            }
+            history.scrollTop = history.scrollHeight;
+        }
+    </script>
+</body>
+</html>
