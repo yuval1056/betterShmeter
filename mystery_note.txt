@@ -1,0 +1,1 @@
+This is a secret file created by the agent for testing purposes.
