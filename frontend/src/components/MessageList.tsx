@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { BotIcon, ChatIcon, UserIcon } from "./Icons";
+import Markdown from "./Markdown";
 import type { ChatMessage, Role } from "../types";
 
 function formatTime(date: Date): string {
@@ -46,7 +47,7 @@ export default function MessageList({ messages, loading }: Props) {
         <div key={m.id} className={"msg-row " + m.role}>
           <Avatar role={m.role} />
           <div className="msg-group">
-            <div className={"msg " + m.role + (m.variant ? " " + m.variant : "")}>{m.text}</div>
+            <div className={"msg " + m.role + (m.variant ? " " + m.variant : "")}>{m.role === "assistant" ? <Markdown text={m.text} /> : m.text}</div>
             <div className="msg-timestamp">{formatTime(m.time)}</div>
           </div>
         </div>

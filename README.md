@@ -13,6 +13,7 @@ tool-calling agent that talks to GitHub through the official GitHub MCP server.
   anything sent to GitHub or shown back to you.
 - **Saved chats:** previous conversations are listed in a left sidebar; open any
   of them to continue it. The model sees only the last 10 messages of the open chat.
+- **Rich replies:** answers render markdown (lists, tables, code) and LaTeX math.
 - **One message at a time:** every message gets a reply (or an error message), and
   you can't send another until it arrives.
 - **Startup log:** the backend prints which LLM model and endpoint it uses when it starts.
