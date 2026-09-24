@@ -15,6 +15,21 @@ export interface ChatResponse {
   status: ChatStatus;
 }
 
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A persisted message as returned by the history endpoints. */
+export interface StoredMessage {
+  id: number;
+  role: Role;
+  content: string;
+  created_at: string;
+}
+
 export interface GithubStatus {
   connected: boolean;
   owner?: string;

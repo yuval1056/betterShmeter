@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.models.schemas import (
     ChatRequest,
     ChatResponse,
+    ConversationList,
     GithubConnectRequest,
     GithubStatus,
     HistoryResponse,
@@ -59,6 +60,45 @@ async def delete_history(
     try:
         await repository.clear_history(user_id)
         return {"status": "cleared"}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="internal error") from exc
+
+
+@router.get("/conversations/{user_id}", response_model=ConversationList)
+async def list_conversations(
+    user_id: str,
+    repository: MessageRepository = Depends(get_repository),
+) -> ConversationList:
+    try:
+        return ConversationList(
+            user_id=user_id, conversations=await repository.list_conversations(user_id)
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="internal error") from exc
+
+
+@router.get("/conversations/{user_id}/{conversation_id}", response_model=HistoryResponse)
+async def get_conversation(
+    user_id: str,
+    conversation_id: str,
+    repository: MessageRepository = Depends(get_repository),
+) -> HistoryResponse:
+    try:
+        messages = await repository.get_history(user_id, conversation_id=conversation_id)
+        return HistoryResponse(user_id=user_id, messages=messages)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="internal error") from exc
+
+
+@router.delete("/conversations/{user_id}/{conversation_id}")
+async def delete_conversation(
+    user_id: str,
+    conversation_id: str,
+    repository: MessageRepository = Depends(get_repository),
+) -> dict:
+    try:
+        await repository.delete_conversation(user_id, conversation_id)
+        return {"status": "deleted"}
     except Exception as exc:
         raise HTTPException(status_code=500, detail="internal error") from exc
 

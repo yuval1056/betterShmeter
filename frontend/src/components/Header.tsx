@@ -1,4 +1,4 @@
-import { GithubIcon, SparkleIcon, TrashIcon } from "./Icons";
+import { GithubIcon, SparkleIcon } from "./Icons";
 import type { GithubStatus } from "../types";
 
 interface Props {
@@ -7,14 +7,17 @@ interface Props {
   isDark: boolean;
   onGithub: () => void;
   onToggleTheme: () => void;
-  onClear: () => void;
+  onMenu: () => void;
 }
 
-export default function Header({ online, github, isDark, onGithub, onToggleTheme, onClear }: Props) {
+export default function Header({ online, github, isDark, onGithub, onToggleTheme, onMenu }: Props) {
   const ghTitle = github.connected ? `GitHub: ${github.owner} / ${github.repo}` : "Connect GitHub";
   return (
     <header className="app-header">
       <div className="app-header-title">
+        <button className="icon-btn menu-btn" type="button" title="Chats" aria-label="Show chats" onClick={onMenu}>
+          ☰
+        </button>
         <div className="app-logo" aria-hidden="true">
           <SparkleIcon />
         </div>
@@ -38,10 +41,6 @@ export default function Header({ online, github, isDark, onGithub, onToggleTheme
         </button>
         <button className="icon-btn" type="button" title="Toggle theme" aria-label="Toggle dark mode" onClick={onToggleTheme}>
           {isDark ? "☀️" : "🌙"}
-        </button>
-        <button className="clear-btn" type="button" onClick={onClear}>
-          <TrashIcon />
-          <span>Clear</span>
         </button>
       </div>
     </header>

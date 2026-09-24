@@ -142,6 +142,12 @@ A React + TypeScript single-page app built with Vite. `App.tsx` owns the state
 [api.ts](frontend/src/api.ts), which uses `VITE_API_BASE`
 (default `http://localhost:8000/api`) for chat, history and GitHub connection.
 
+The left sidebar ([Sidebar.tsx](frontend/src/components/Sidebar.tsx)) lists the
+user's saved conversations. A new chat is only an unsaved id until its first message;
+the backend then creates a `conversations` row (title = first message) next to the
+`messages` rows. The LLM context is the last `HISTORY_LIMIT` (10) messages of the
+open conversation only.
+
 ## Key design decisions
 
 - **Marker-based routing** in one model call keeps guardrails and routing together.

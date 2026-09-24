@@ -46,7 +46,10 @@ async def handle_message(
         return ChatResponse(reply=reply, status="ok")
 
     try:
-        history = await repository.get_history(user_id, limit=settings.HISTORY_LIMIT)
+        # Context is the last HISTORY_LIMIT (10) messages of *this* conversation.
+        history = await repository.get_history(
+            user_id, limit=settings.HISTORY_LIMIT, conversation_id=conversation_id
+        )
         # `history`'s last entry is the message just saved above, so it's
         # not appended a second time -- only the reinforcement note is added.
         context = _history_to_messages(history) + [

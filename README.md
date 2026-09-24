@@ -11,6 +11,11 @@ tool-calling agent that talks to GitHub through the official GitHub MCP server.
   are blocked in code until you confirm them in a separate message.
 - **Secret redaction:** known secrets (API key, GitHub token) are stripped from
   anything sent to GitHub or shown back to you.
+- **Saved chats:** previous conversations are listed in a left sidebar; open any
+  of them to continue it. The model sees only the last 10 messages of the open chat.
+- **One message at a time:** every message gets a reply (or an error message), and
+  you can't send another until it arrives.
+- **Startup log:** the backend prints which LLM model and endpoint it uses when it starts.
 - **Per-user history and credentials**, stored in local SQLite files.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for how the code is organized.
@@ -86,7 +91,10 @@ All routes are under `/api`.
 | GET    | `/health`                | Liveness check                                |
 | POST   | `/chat`                  | Send a message, get `{reply, status}`         |
 | GET    | `/history/{user_id}`     | Fetch a user's message history                |
-| DELETE | `/history/{user_id}`     | Clear a user's history                        |
+| DELETE | `/history/{user_id}`     | Clear all of a user's history                 |
+| GET    | `/conversations/{user_id}` | List a user's chats, newest first           |
+| GET    | `/conversations/{user_id}/{conversation_id}` | Fetch one chat's messages |
+| DELETE | `/conversations/{user_id}/{conversation_id}` | Delete one chat           |
 | POST   | `/github/connect`        | Verify and save a user's token + repo         |
 | GET    | `/github/status/{user_id}` | Whether the user has GitHub connected       |
 | DELETE | `/github/{user_id}`      | Disconnect GitHub                             |

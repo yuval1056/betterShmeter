@@ -1,4 +1,4 @@
-import type { ChatResponse, GithubStatus } from "./types";
+import type { ChatResponse, ConversationSummary, GithubStatus, StoredMessage } from "./types";
 
 // Backend base URL. Override with VITE_API_BASE; the frontend origin must be
 // listed in the backend's CORS_ORIGINS.
@@ -39,12 +39,24 @@ export async function sendChat(userId: string, conversationId: string, message: 
   return res.json();
 }
 
-export async function clearHistory(userId: string): Promise<void> {
+export async function listConversations(userId: string): Promise<ConversationSummary[]> {
   try {
-    await request(`/history/${uid(userId)}`, { method: "DELETE" });
+    const res = await request(`/conversations/${uid(userId)}`);
+    return res.ok ? (await res.json()).conversations : [];
   } catch {
-    // ignore -- the UI clears regardless
+    return []; // backend offline
   }
+}
+
+export async function getConversation(userId: string, conversationId: string): Promise<StoredMessage[]> {
+  const res = await request(`/conversations/${uid(userId)}/${uid(conversationId)}`);
+  if (!res.ok) throw new HttpError(res.status);
+  return (await res.json()).messages;
+}
+
+export async function deleteConversation(userId: string, conversationId: string): Promise<void> {
+  const res = await request(`/conversations/${uid(userId)}/${uid(conversationId)}`, { method: "DELETE" });
+  if (!res.ok) throw new HttpError(res.status);
 }
 
 export async function getGithubStatus(userId: string): Promise<GithubStatus | null> {

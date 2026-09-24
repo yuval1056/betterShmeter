@@ -6,9 +6,11 @@ interface Props {
   onSend: (text: string) => void;
   /** Bump to move focus back to the input (e.g. after closing a modal). */
   focusSignal: number;
+  /** True while a reply is pending: the user can type but not send. */
+  busy: boolean;
 }
 
-export default function Composer({ onSend, focusSignal }: Props) {
+export default function Composer({ onSend, focusSignal, busy }: Props) {
   const [value, setValue] = useState("");
   const [sent, setSent] = useState<string[]>([]);
   const [histIdx, setHistIdx] = useState(-1);
@@ -29,7 +31,7 @@ export default function Composer({ onSend, focusSignal }: Props) {
   function submit(event?: FormEvent) {
     event?.preventDefault();
     const text = value.trim();
-    if (!text) return;
+    if (!text || busy) return;
     setSent((s) => [...s, text]);
     setHistIdx(-1);
     setValue("");
@@ -75,13 +77,13 @@ export default function Composer({ onSend, focusSignal }: Props) {
             ref={inputRef}
             rows={1}
             autoComplete="off"
-            placeholder="Ask me anything, or about the connected GitHub repo..."
+            placeholder={busy ? "Waiting for a reply..." : "Ask me anything, or about the connected GitHub repo..."}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={onKeyDown}
           />
         </div>
-        <button className="send-btn" type="submit" title="Send" aria-label="Send message" disabled={!value.trim()}>
+        <button className="send-btn" type="submit" title="Send" aria-label="Send message" disabled={busy || !value.trim()}>
           <SendIcon />
         </button>
       </form>

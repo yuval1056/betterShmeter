@@ -45,3 +45,15 @@ class Message(BaseModel):
 class HistoryResponse(BaseModel):
     user_id: str
     messages: list[Message]
+
+
+class Conversation(BaseModel):
+    id: str
+    title: str
+    created_at: str
+    updated_at: str
+
+
+class ConversationList(BaseModel):
+    user_id: str
+    conversations: list[Conversation]

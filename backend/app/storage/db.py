@@ -13,6 +13,15 @@ CREATE TABLE IF NOT EXISTS messages (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_messages_user_id_id ON messages (user_id, id);
+
+CREATE TABLE IF NOT EXISTS conversations (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_conversations_user_updated ON conversations (user_id, updated_at);
 """
 
 
@@ -29,5 +38,9 @@ def create_connection() -> sqlite3.Connection:
     columns = {row[1] for row in conn.execute("PRAGMA table_info(messages)")}
     if "conversation_id" not in columns:
         conn.execute("ALTER TABLE messages ADD COLUMN conversation_id TEXT")
+    # Created here rather than in _SCHEMA because the column may be added above.
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages (conversation_id, id)"
+    )
     conn.commit()
     return conn
