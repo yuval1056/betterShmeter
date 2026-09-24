@@ -23,12 +23,12 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for how the code is organized.
 | LLM      | Any OpenAI-compatible proxy (via the `openai` SDK)          |
 | GitHub   | `@modelcontextprotocol/server-github` over MCP (stdio, npx) |
 | Storage  | SQLite (WAL mode)                                           |
-| Frontend | Plain HTML / CSS / JavaScript (no build step)               |
+| Frontend | React + TypeScript (Vite)                                   |
 
 ## Prerequisites
 
 - Python 3.11+
-- Node.js (for `npx`, which launches the GitHub MCP server)
+- Node.js (builds the frontend, and `npx` launches the GitHub MCP server)
 - An API key for an OpenAI-compatible LLM endpoint (optional, see below)
 - A GitHub personal access token (only for GitHub mode)
 
@@ -70,11 +70,12 @@ uvicorn app.main:app --port 8000
 Frontend (from `frontend/`, in a second terminal):
 
 ```bash
-python -m http.server 3000
+npm install
+npm run dev
 ```
 
 Open http://localhost:3000. The frontend calls the API at `http://localhost:8000/api`
-(set in [frontend/index.html](frontend/index.html)); its origin must be listed in `CORS_ORIGINS`.
+(override with `VITE_API_BASE`, see [frontend/src/api.ts](frontend/src/api.ts)); its origin must be listed in `CORS_ORIGINS`.
 
 ## API
 

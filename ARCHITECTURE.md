@@ -7,8 +7,14 @@ Better_Shmeter2/
 ├── README.md               Setup, run, API overview
 ├── ARCHITECTURE.md         This file
 ├── frontend/
-│   ├── index.html          Single-page chat UI + all JS (fetches the API)
-│   └── style.css
+│   ├── index.html          Vite entry page
+│   ├── package.json, vite.config.ts, tsconfig.json
+│   └── src/
+│       ├── main.tsx, App.tsx       App state and wiring
+│       ├── api.ts                  Typed fetch wrapper for the backend
+│       ├── storage.ts, types.ts    localStorage helpers, shared types
+│       ├── components/             Header, MessageList, Composer, GithubModal, Icons
+│       └── style.css
 └── backend/
     ├── requirements.txt
     ├── .env.example        Template for secrets/config (real .env is gitignored)
@@ -130,9 +136,11 @@ older files by adding the `conversation_id` column if missing.
 
 ## Frontend
 
-A single static page, [frontend/index.html](frontend/index.html), with inline
-JavaScript and [style.css](frontend/style.css). No build step. It calls the API at
-`API_BASE` (`http://localhost:8000/api`) for chat, history and GitHub connection.
+A React + TypeScript single-page app built with Vite. `App.tsx` owns the state
+(messages, GitHub status, theme) and passes it to small components in
+[frontend/src/components/](frontend/src/components/). All backend calls go through
+[api.ts](frontend/src/api.ts), which uses `VITE_API_BASE`
+(default `http://localhost:8000/api`) for chat, history and GitHub connection.
 
 ## Key design decisions
 
