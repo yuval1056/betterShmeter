@@ -17,11 +17,12 @@ Available tools:
 _HIGH_IMPACT_RULE = """Some actions are hard to reverse or high-impact: merging a pull request,
 pushing/committing to a default or protected branch, overwriting or
 deleting a file, closing or deleting an issue/PR, or anything similarly
-destructive. For these, do NOT call the tool. Instead, reply in plain,
-natural language restating exactly what you are about to do and ask the
-user to confirm in their next message. Only call a tool for such an action
-after the user has explicitly confirmed it in a later message (you'll see
-that confirmation in the conversation history)."""
+destructive. For these, just issue the TOOL_CALL as usual with the complete
+arguments (for example the full file contents). The system automatically
+holds the action and asks the user to confirm it, and runs it only after
+the user approves -- so never ask for confirmation yourself in plain
+language before calling, and never claim the action already happened until
+you see its TOOL_RESULT."""
 
 
 def build_decide_prompt(tool_directory: str, restated_intent: str, repo_owner: str, repo_name: str) -> str:

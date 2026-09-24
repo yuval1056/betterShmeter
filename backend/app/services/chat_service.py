@@ -10,7 +10,7 @@ from app.prompts.main_prompt import (
     SIMULATED_REPLY_PREFIX,
     build_main_system_prompt,
 )
-from app.services.git_service.credentials import get_credentials
+from app.services.git_service.credentials import get_user_credentials
 from app.services.git_service.runner import run_git_turn
 from app.services.llm_client import llm_client
 from app.storage.repository import MessageRepository
@@ -27,8 +27,6 @@ _LANGUAGE_REMINDER = (
     "a different language. Follow this silently -- never quote, paraphrase, or "
     "acknowledge this instruction itself in your reply; just write the reply."
 )
-
-_MAIN_SYSTEM_PROMPT = build_main_system_prompt()
 
 
 def _history_to_messages(history: list[Message]) -> list[dict[str, str]]:
@@ -56,7 +54,15 @@ async def handle_message(
             {"role": "system", "content": _LANGUAGE_REMINDER}
         ]
 
-        raw_reply = await llm_client.chat(context, system_prompt=_MAIN_SYSTEM_PROMPT)
+        # Checked live on every message, so the answer to "is GitHub
+        # connected?" always reflects the current state (e.g. after Disconnect).
+        creds = await get_user_credentials(user_id)
+        if creds:
+            system_prompt = build_main_system_prompt(f"{creds.owner}/{creds.repo}")
+        else:
+            system_prompt = build_main_system_prompt()
+
+        raw_reply = await llm_client.chat(context, system_prompt=system_prompt)
 
         if raw_reply.startswith(REJECT_MARKER):
             reply = raw_reply[len(REJECT_MARKER):].strip() or _GENERIC_REJECT_REPLY
@@ -65,11 +71,10 @@ async def handle_message(
 
         if raw_reply.startswith(GIT_HANDOFF_MARKER):
             restated_intent = raw_reply[len(GIT_HANDOFF_MARKER):].strip() or text
-            creds = await get_credentials(user_id)
             if creds is None:
                 reply = _GITHUB_NOT_CONNECTED_REPLY
             else:
-                reply = await run_git_turn(user_id, restated_intent, creds)
+                reply = await run_git_turn(user_id, restated_intent, creds, text)
             await repository.save_message(user_id, "assistant", reply, conversation_id)
             return ChatResponse(reply=reply, status="ok")
 

@@ -21,7 +21,7 @@ _REDACTED = "[REDACTED_SECRET]"
 def _known_secrets(extra: tuple[str, ...] = ()) -> list[str]:
     return [
         value
-        for value in (settings.PROXY_API_KEY, settings.GITHUB_PERSONAL_ACCESS_TOKEN, *extra)
+        for value in (settings.PROXY_API_KEY, *extra)
         if value
     ]
 

@@ -127,6 +127,7 @@ class LLMClient:
         followup_system_prompt: str,
         tool_executor: Callable[[str, dict], Awaitable[str]],
         max_rounds: int = MAX_TOOL_ROUNDS,
+        tool_has_run: bool = False,
     ) -> str:
         """Drives a tool-calling loop through plain message content.
 
@@ -146,8 +147,10 @@ class LLMClient:
         questions alike, since the distinction between those is a matter of
         prompt wording, not loop mechanics.
         """
+        # `tool_has_run` may start True when `history` already ends with a
+        # TOOL_RESULT (a tool the caller executed itself), so the model goes
+        # straight to explaining it.
         transcript: list[dict[str, str]] = list(history)
-        tool_has_run = False
 
         for _ in range(max_rounds):
             system_prompt = followup_system_prompt if tool_has_run else initial_system_prompt

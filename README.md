@@ -55,12 +55,11 @@ Then edit `backend/.env`:
 | `PROXY_API_KEY`                | LLM key. If empty, the app returns `[simulated reply]` instead |
 | `PROXY_BASE_URL`               | OpenAI-compatible endpoint                                     |
 | `PROXY_MODEL_NAME`             | Model to use                                                   |
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | Optional server-wide GitHub fallback token                     |
-| `GITHUB_OWNER`, `GITHUB_REPO`  | Repository for that fallback token                             |
 | `CORS_ORIGINS`                 | Allowed frontend origins, comma-separated                      |
 
-Users can also connect their own token and repo from the GitHub button in the UI;
-that takes priority over the `.env` fallback.
+There is no GitHub setting in `.env`: each user connects their own token and
+repository with the GitHub button in the app's header. Until they do, GitHub mode
+is off for that user.
 
 ## Run
 

@@ -12,11 +12,6 @@ class Settings(BaseSettings):
     PROXY_BASE_URL: str = ""
     PROXY_MODEL_NAME: str = ""
 
-    # GitHub integration used by the git-mode tool calls.
-    GITHUB_PERSONAL_ACCESS_TOKEN: str = ""
-    GITHUB_OWNER: str = ""
-    GITHUB_REPO: str = ""
-
     # Comma-separated list of allowed frontend origins.
     CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
 

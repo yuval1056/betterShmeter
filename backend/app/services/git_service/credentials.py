@@ -6,9 +6,9 @@ given repository (see mcp_client.verify_repo).
 
 GitHub no longer accepts account passwords for API access, so a personal
 access token is the only secret collected. The token is stored in plain
-text, so treat the file like any local secret. If a user hasn't connected
-their own account, the server-level values from .env (if any) act as a
-fallback."""
+text, so treat the file like any local secret. There is deliberately no
+server-wide default repository: GitHub is only ever available to a user who
+connected it themselves through the UI."""
 
 import asyncio
 import sqlite3
@@ -100,15 +100,3 @@ async def delete_credentials(user_id: str) -> None:
     await asyncio.to_thread(_delete_sync, user_id)
 
 
-async def get_credentials(user_id: str) -> GitCredentials | None:
-    """The user's own credentials, else the server-level fallback, else None."""
-    creds = await get_user_credentials(user_id)
-    if creds:
-        return creds
-    if settings.GITHUB_PERSONAL_ACCESS_TOKEN:
-        return GitCredentials(
-            token=settings.GITHUB_PERSONAL_ACCESS_TOKEN,
-            owner=settings.GITHUB_OWNER,
-            repo=settings.GITHUB_REPO,
-        )
-    return None
