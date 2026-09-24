@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Better Shmeter</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234338ca'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M9 20c0-5 3-9 7-9s7 4 7 9' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='9' r='2' fill='white'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=5" />
+</head>
+<body>
+  <div class="app-shell">
+  <div class="app">
+    <header class="app-header">
+      <div class="app-header-title">
+        <div class="app-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l1.9 4.5L18 9l-4.1 1.5L12 15l-1.9-4.5L6 9l4.1-1.5L12 3z"></path>
+            <path d="M19 15l0.9 2.1L22 18l-2.1 0.9L19 21l-0.9-2.1L16 18l2.1-0.9L19 15z"></path>
+          </svg>
+        </div>
+        <div class="app-header-text">
+          <h1>Better Shmeter</h1>
+          <div class="app-subtitle"><span class="status-dot" aria-hidden="true"></span><span id="status-text">Connected</span></div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="gh-btn" class="icon-btn gh-btn" type="button" title="Connect GitHub" aria-label="Connect GitHub">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+            <path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"></path>
+          </svg>
+        </button>
+        <button id="theme-btn" class="icon-btn" type="button" title="Toggle theme" aria-label="Toggle dark mode">🌙</button>
+        <button id="clear-btn" class="clear-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+          </svg>
+          <span>Clear</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="messages" class="messages" aria-live="polite">
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+        </div>
+        <h2>Start a conversation</h2>
+        <p>Ask a question, or ask about the connected GitHub repo. Your history is saved automatically.</p>
+      </div>
+    </main>
+
+    <form id="chat-form" class="chat-form">
+      <div class="composer-wrap">
+        <textarea
+          id="chat-input"
+          rows="1"
+          autocomplete="off"
+          placeholder="Ask me anything, or about the connected GitHub repo..."
+          required
+        ></textarea>
+      </div>
+      <button id="send-btn" class="send-btn" type="submit" title="Send" aria-label="Send message" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+    <div class="hint">Press <kbd>Enter</kbd> to send &middot; <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line</div>
+  </div>
+  </div>
+
+  <div id="gh-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="gh-title">
+    <form id="gh-form" class="modal" autocomplete="off">
+      <h2 id="gh-title">Connect GitHub</h2>
+      <p>
+        Enter a <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">personal access token</a>
+        (with <b>repo</b> scope), your GitHub username and the repository to work on. GitHub no longer accepts
+        account passwords for API access, so a token is used instead. The details are verified through GitHub
+        first, then saved in a local SQLite file on the server.
+      </p>
+      <label for="gh-token">Personal access token</label>
+      <input id="gh-token" type="password" placeholder="ghp_..." autocomplete="new-password" />
+      <label for="gh-owner">GitHub username / owner</label>
+      <input id="gh-owner" type="text" placeholder="username or organization" required />
+      <label for="gh-repo">Repository</label>
+      <input id="gh-repo" type="text" placeholder="my-repo" required />
+      <div id="gh-error" class="modal-error" role="alert"></div>
+      <div class="modal-actions">
+        <button id="gh-disconnect" type="button" style="display:none">Disconnect</button>
+        <button id="gh-cancel" type="button">Cancel</button>
+        <button id="gh-save" class="primary" type="submit">Connect</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Backend base URL -- change this if the API isn't served from
+    // localhost:8000 (must be listed in the backend's CORS_ORIGINS).
+    const API_BASE = "http://localhost:8000/api";
+
+    const USER_ID_KEY = "shmeter_user_id";
+    const THEME_KEY = "shmeter_theme";
+
+    const USER_AVATAR_SVG =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+
+    const BOT_AVATAR_SVG =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V4"></path><circle cx="12" cy="3" r="1"></circle>' +
+      '<line x1="9" y1="14" x2="9" y2="15"></line><line x1="15" y1="14" x2="15" y2="15"></line></svg>';
+
+    function getOrCreateUserId() {
+      let id = null;
+      try {
+        id = localStorage.getItem(USER_ID_KEY);
+      } catch (err) {
+        // localStorage unavailable (private mode, etc.) -- fall back to
+        // an in-memory id for this page load only.
+      }
+      if (!id) {
+        id = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now()) + Math.random().toString(16).slice(2);
+        try {
+          localStorage.setItem(USER_ID_KEY, id);
+        } catch (err) {
+          // ignore -- see above
+        }
+      }
+      return id;
+    }
+
+    const userId = getOrCreateUserId();
+    // One id per conversation; a new one starts on page load and on Clear.
+    let conversationId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    const messagesEl = document.getElementById("messages");
+    const formEl = document.getElementById("chat-form");
+    const inputEl = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const themeBtn = document.getElementById("theme-btn");
+    const statusTextEl = document.getElementById("status-text");
+
+    // Message history for up/down arrow navigation
+    let messageHistory = [];
+    let historyIndex = -1;
+
+    // ---------- Theme ----------
+
+    function applyTheme(theme) {
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isDark = theme === "dark" || (theme !== "light" && prefersDark);
+      themeBtn.textContent = isDark ? "☀️" : "🌙";
+    }
+
+    function initTheme() {
+      let saved = null;
+      try {
+        saved = localStorage.getItem(THEME_KEY);
+      } catch (err) {
+        // ignore
+      }
+      applyTheme(saved);
+    }
+
+    themeBtn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme");
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const currentlyDark = current === "dark" || (!current && prefersDark);
+      const next = currentlyDark ? "light" : "dark";
+      applyTheme(next);
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch (err) {
+        // ignore
+      }
+    });
+
+    initTheme();
+
+    // ---------- Helpers ----------
+
+    function hideEmptyState() {
+      const el = document.getElementById("empty-state");
+      if (el) el.remove();
+    }
+
+    function formatTime(date) {
+      try {
+        return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      } catch (err) {
+        return "";
+      }
+    }
+
+    function buildAvatar(role) {
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.innerHTML = role === "user" ? USER_AVATAR_SVG : BOT_AVATAR_SVG;
+      avatar.setAttribute("aria-hidden", "true");
+      return avatar;
+    }
+
+    function appendBubble(role, text, variant) {
+      hideEmptyState();
+
+      const row = document.createElement("div");
+      row.className = "msg-row " + role;
+
+      const group = document.createElement("div");
+      group.className = "msg-group";
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg " + role + (variant ? " " + variant : "");
+      bubble.textContent = text;
+
+      group.appendChild(bubble);
+
+      const timestamp = document.createElement("div");
+      timestamp.className = "msg-timestamp";
+      timestamp.textContent = formatTime(new Date());
+      group.appendChild(timestamp);
+
+      row.appendChild(buildAvatar(role));
+      row.appendChild(group);
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return { row, bubble };
+    }
+
+    function appendLoadingBubble() {
+      hideEmptyState();
+
+      const row = document.createElement("div");
+      row.className = "msg-row assistant";
+
+      const group = document.createElement("div");
+      group.className = "msg-group";
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg assistant loading";
+      bubble.innerHTML =
+        '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+
+      group.appendChild(bubble);
+      row.appendChild(buildAvatar("assistant"));
+      row.appendChild(group);
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return row;
+    }
+
+    function autoGrow() {
+      inputEl.style.height = "auto";
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
+    }
+
+    function updateSendState() {
+      sendBtn.disabled = inputEl.value.trim().length === 0;
+    }
+
+    // ---------- History ----------
+
+    async function clearHistoryFromBackend() {
+      try {
+        await fetch(`${API_BASE}/history/${encodeURIComponent(userId)}`, { method: "DELETE" });
+      } catch (err) {
+        // ignore -- clearing regardless
+      }
+    }
+
+    async function loadHistory() {
+      // Clear chat on page refresh
+      await clearHistoryFromBackend();
+      messagesEl.innerHTML = "";
+
+      // Add empty state
+      const empty = document.createElement("div");
+      empty.id = "empty-state";
+      empty.className = "empty-state";
+      empty.innerHTML =
+        '<div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>' +
+        '</svg></div><h2>Start a conversation</h2>' +
+        '<p>Ask a question, or ask about the connected GitHub repo. Your history is saved automatically.</p>';
+      messagesEl.appendChild(empty);
+    }
+
+    function setStatus(connected) {
+      statusTextEl.textContent = connected ? "Connected" : "Offline";
+      statusTextEl.previousElementSibling.style.background = connected ? "#4ade80" : "#f87171";
+    }
+
+    // ---------- Sending ----------
+
+    async function sendMessage(text) {
+      // Add to message history for up/down navigation
+      messageHistory.push(text);
+      historyIndex = -1;
+
+      appendBubble("user", text);
+      const loadingRow = appendLoadingBubble();
+
+      let res;
+      try {
+        res = await fetch(`${API_BASE}/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, conversation_id: conversationId, message: text }),
+        });
+      } catch (networkErr) {
+        loadingRow.remove();
+        appendBubble("assistant", "Couldn't reach the server. Check your connection and try again.", "network-error");
+        setStatus(false);
+        return;
+      }
+
+      loadingRow.remove();
+      setStatus(true);
+
+      if (!res.ok) {
+        appendBubble("assistant", "Something went wrong on the server (HTTP " + res.status + ").", "error");
+        return;
+      }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        appendBubble("assistant", "Got an unreadable response from the server.", "error");
+        return;
+      }
+
+      appendBubble("assistant", data.reply, data.status || "ok");
+    }
+
+    formEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = inputEl.value.trim();
+      if (!text) return;
+      inputEl.value = "";
+      autoGrow();
+      updateSendState();
+      sendMessage(text);
+    });
+
+    inputEl.addEventListener("input", () => {
+      autoGrow();
+      updateSendState();
+    });
+
+    inputEl.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        formEl.requestSubmit();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (messageHistory.length === 0) return;
+
+        if (historyIndex === -1) {
+          // First time pressing up, go to last message
+          historyIndex = messageHistory.length - 1;
+        } else if (historyIndex > 0) {
+          // Go back further in history
+          historyIndex--;
+        }
+
+        inputEl.value = messageHistory[historyIndex];
+        autoGrow();
+        updateSendState();
+        // Move cursor to end
+        inputEl.selectionStart = inputEl.selectionEnd = inputEl.value.length;
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (messageHistory.length === 0) return;
+
+        if (historyIndex === -1) return;
+
+        if (historyIndex < messageHistory.length - 1) {
+          // Go forward in history
+          historyIndex++;
+          inputEl.value = messageHistory[historyIndex];
+        } else {
+          // Reached the end, clear input
+          historyIndex = -1;
+          inputEl.value = "";
+        }
+
+        autoGrow();
+        updateSendState();
+        inputEl.selectionStart = inputEl.selectionEnd = inputEl.value.length;
+      }
+    });
+
+    clearBtn.addEventListener("click", async () => {
+      try {
+        await fetch(`${API_BASE}/history/${encodeURIComponent(userId)}`, { method: "DELETE" });
+      } catch (err) {
+        // ignore -- UI clears regardless
+      }
+      conversationId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+      messagesEl.innerHTML = "";
+      const fresh = document.createElement("div");
+      fresh.id = "empty-state";
+      fresh.className = "empty-state";
+      fresh.innerHTML =
+        '<div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>' +
+        '</svg></div><h2>Start a conversation</h2>' +
+        '<p>Ask a question, or ask about the connected GitHub repo. Your history is saved automatically.</p>';
+      messagesEl.appendChild(fresh);
+    });
+
+    // ---------- GitHub connection ----------
+
+    const ghBtn = document.getElementById("gh-btn");
+    const ghModal = document.getElementById("gh-modal");
+    const ghForm = document.getElementById("gh-form");
+    const ghToken = document.getElementById("gh-token");
+    const ghOwner = document.getElementById("gh-owner");
+    const ghRepo = document.getElementById("gh-repo");
+    const ghError = document.getElementById("gh-error");
+    const ghSave = document.getElementById("gh-save");
+    const ghDisconnect = document.getElementById("gh-disconnect");
+
+    function applyGithubStatus(status) {
+      const connected = !!(status && status.connected);
+      ghBtn.classList.toggle("connected", connected);
+      ghBtn.title = connected
+        ? "GitHub: " + status.owner + " / " + status.repo
+        : "Connect GitHub";
+      ghDisconnect.style.display = connected ? "" : "none";
+      if (connected) {
+        ghOwner.value = status.owner;
+        ghRepo.value = status.repo;
+      }
+    }
+
+    async function refreshGithubStatus() {
+      try {
+        const res = await fetch(`${API_BASE}/github/status/${encodeURIComponent(userId)}`);
+        if (res.ok) applyGithubStatus(await res.json());
+      } catch (err) {
+        // backend offline -- leave the button in its default state
+      }
+    }
+
+    function openGithubModal() {
+      ghError.textContent = "";
+      ghToken.value = "";
+      ghModal.classList.add("open");
+      ghToken.focus();
+    }
+
+    function closeGithubModal() {
+      ghModal.classList.remove("open");
+      ghToken.value = "";
+      inputEl.focus();
+    }
+
+    ghBtn.addEventListener("click", openGithubModal);
+    document.getElementById("gh-cancel").addEventListener("click", closeGithubModal);
+    ghModal.addEventListener("click", (event) => {
+      if (event.target === ghModal) closeGithubModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && ghModal.classList.contains("open")) closeGithubModal();
+    });
+
+    ghForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      ghError.textContent = "";
+      ghSave.disabled = true;
+      ghSave.textContent = "Connecting...";
+      try {
+        const res = await fetch(`${API_BASE}/github/connect`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            conversation_id: conversationId,
+            token: ghToken.value.trim(),
+            owner: ghOwner.value.trim(),
+            repo: ghRepo.value.trim(),
+          }),
+        });
+        if (!res.ok) {
+          let detail = "Couldn't connect (HTTP " + res.status + ").";
+          try {
+            const body = await res.json();
+            if (typeof body.detail === "string") detail = body.detail;
+          } catch (err) {
+            // keep the generic message
+          }
+          ghError.textContent = detail;
+          return;
+        }
+        applyGithubStatus(await res.json());
+        closeGithubModal();
+        appendBubble("assistant", "GitHub connected. You can now ask me to work with your repository.");
+      } catch (err) {
+        ghError.textContent = "Couldn't reach the server.";
+      } finally {
+        ghSave.disabled = false;
+        ghSave.textContent = "Connect";
+      }
+    });
+
+    ghDisconnect.addEventListener("click", async () => {
+      try {
+        await fetch(`${API_BASE}/github/${encodeURIComponent(userId)}`, { method: "DELETE" });
+      } catch (err) {
+        // ignore
+      }
+      ghOwner.value = "";
+      ghRepo.value = "";
+      applyGithubStatus({ connected: false });
+      closeGithubModal();
+    });
+
+    updateSendState();
+    inputEl.focus();
+    loadHistory();
+    refreshGithubStatus();
+  </script>
+</body>
+</html>
